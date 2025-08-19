@@ -3,72 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather App</title>
+  <title>🌦 Weather App</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #74ebd5, #ACB6E5);
-      text-align: center;
-      padding: 40px;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-    .container {
+
+    .weather-card {
       background: white;
-      padding: 20px;
-      border-radius: 12px;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0px 8px 20px rgba(0,0,0,0.2);
+      width: 350px;
+      transition: transform 0.3s;
     }
+
+    .weather-card:hover {
+      transform: scale(1.05);
+    }
+
     input {
       padding: 10px;
-      width: 70%;
-      border-radius: 8px;
       border: 1px solid #ccc;
+      border-radius: 10px;
+      width: 70%;
+      font-size: 16px;
     }
+
     button {
       padding: 10px 15px;
+      margin-top: 10px;
       border: none;
-      border-radius: 8px;
-      background: #007BFF;
+      border-radius: 10px;
+      background: #4facfe;
       color: white;
+      font-size: 16px;
       cursor: pointer;
     }
+
     button:hover {
-      background: #0056b3;
+      background: #00c6ff;
     }
-    .weather {
+
+    .weather-info {
       margin-top: 20px;
+    }
+
+    .temp {
+      font-size: 40px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .condition {
+      font-size: 20px;
+      color: #555;
+    }
+
+    .extra {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #333;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>🌦 Weather App</h2>
+  <div class="weather-card">
+    <h2>🌍 Weather App</h2>
     <input type="text" id="cityInput" placeholder="Enter city name">
+    <br>
     <button onclick="getWeather()">Get Weather</button>
-    <div class="weather" id="weatherResult"></div>
+
+    <div class="weather-info" id="weatherInfo"></div>
   </div>
 
   <script>
     async function getWeather() {
       const city = document.getElementById("cityInput").value;
+      if (!city) {
+        alert("Please enter a city name!");
+        return;
+      }
+
       const apiKey = "c76457acc4af48dea57152026251808";
-      const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=yes`;
+      const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=yes`;
 
       try {
         const response = await fetch(url);
-        if (!response.ok) throw new Error("City not found");
         const data = await response.json();
 
-        document.getElementById("weatherResult").innerHTML = `
+        document.getElementById("weatherInfo").innerHTML = `
           <h3>${data.location.name}, ${data.location.country}</h3>
-          <p>🌡 Temperature: ${data.current.temp_c} °C</p>
-          <p>🌥 Condition: ${data.current.condition.text}</p>
-          <p>💧 Humidity: ${data.current.humidity}%</p>
-          <p>🌬 Wind: ${data.current.wind_kph} kph</p>
+          <div class="temp">${data.current.temp_c}°C</div>
+          <div class="condition">${data.current.condition.text}</div>
+          <img src="${data.current.condition.icon}" alt="weather icon">
+          <div class="extra">💧 Humidity: ${data.current.humidity}%</div>
+          <div class="extra">🌬 Wind: ${data.current.wind_kph} kph</div>
+          <div class="extra">🌡 Feels like: ${data.current.feelslike_c}°C</div>
         `;
       } catch (error) {
-        document.getElementById("weatherResult").innerHTML = `<p style="color:red;">❌ ${error.message}</p>`;
+        document.getElementById("weatherInfo").innerHTML = `<p style="color:red;">City not found!</p>`;
       }
     }
   </script>
